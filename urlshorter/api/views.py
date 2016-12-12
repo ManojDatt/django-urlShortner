@@ -18,14 +18,13 @@ class IndexAPIView(APIView):
 		if bases.scheme == '':
 			url = 'http://'+original_url
 			res=ShortenedUrls.objects.create(web_url=base64.urlsafe_b64encode(url))
-			encoded_string = base62(res.id)
-			print(encoded_string)
-			short_url=host+encoded_string
+			
+			short_url=host+str(res.id)
 			return Response({"message":"Your shor url generated.","short_url": short_url,"code":200})
 		elif bases.scheme=='http' or bases.scheme=='https':
 			url=original_url
 			res=ShortenedUrls.objects.create(web_url=base64.urlsafe_b64encode(url))
-			encoded_string = base62(res.id)
+			encoded_string = str(res.id)
 			short_url=host+encoded_string
 			return Response({"message":"Your shor url generated.","short_url": short_url,"code":200})
 		else:
@@ -35,9 +34,17 @@ class IndexAPIView(APIView):
 
 class ShortAPIView(APIView):
 	def get(self,request,short_url,format=None):
-		decoded_id = base10(short_url)
+		
 		url = 'http://localhost:8000'
-		res = get_object_or_404(ShortenedUrls,id=decoded_id)
+		res = ShortenedUrls.objects.get(id=short_url)
 		uenc = unicode(res.web_url)
 		url = base64.urlsafe_b64decode(uenc.encode("ascii"))
 		return Response({"message":"Your redirecting Original Url","url": url,"code":200})
+
+from .serializers import *
+from rest_framework_mongoengine import generics as drfme_generics
+from rest_framework import generics
+class ListObjectAPIView(generics.ListAPIView):
+	queryset = ShortenedUrls.objects
+	serializer_class = ShortenedUrlsSerializer
+       
