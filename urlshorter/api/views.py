@@ -14,10 +14,12 @@ class IndexAPIView(APIView):
 		host = 'http://localhost:8000/'
 		original_url = params['url']
 		bases = urlparse(original_url)
+		print(bases)
 		if bases.scheme == '':
 			url = 'http://'+original_url
 			res=ShortenedUrls.objects.create(web_url=base64.urlsafe_b64encode(url))
 			encoded_string = base62(res.id)
+			print(encoded_string)
 			short_url=host+encoded_string
 			return Response({"message":"Your shor url generated.","short_url": short_url,"code":200})
 		elif bases.scheme=='http' or bases.scheme=='https':

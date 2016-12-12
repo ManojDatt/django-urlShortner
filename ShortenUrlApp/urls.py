@@ -19,7 +19,8 @@ from urlshorter.views import (IndexView, ShortView)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^api/', include('urlshorter.api.urls', namespace='rest_api')),
     url(r'^$',IndexView.as_view(), name="index"),
-    url(r'^/(?P<short_url>.*)$',ShortView.as_view(), name='shorter'),
-    url(r'^api/', include('urlshorter.api.urls', namespace='rest_api'))
+    url(r'^(?P<short_url>.*)/$',ShortView.as_view(), name='shorter'),
+    
 ]
